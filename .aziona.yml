@@ -1,0 +1,26 @@
+version: "1"
+
+options:
+  interpolation: true
+  session_clean_before: False
+  session_clean_after: False
+
+targets:
+  login-build-push:
+    stages:
+      login:
+        module: aziona.packages.docker.login_aws_credentials
+        args: 
+          --region: ${ECR_AWS_REGION}
+          --registry: ${DOCKER_IMAGE_REGISTRY}
+      build: 
+        module: aziona.packages.docker.build
+        args: 
+          --path: .
+          --dockerfile: Dockerfile
+          --target: ${DOCKER_BUILD_TARGET}
+          --tag: ${DOCKER_IMAGE}
+      push: 
+        module: aziona.packages.docker.push
+        args: 
+          --image: ${DOCKER_IMAGE}
